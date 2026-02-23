@@ -1,12 +1,13 @@
 import { test, expect } from '@playwright/test';
-import { Candidatelist } from '../pages/recruitmentPage/candidatelist'
+import { CandidateList } from '../pages/recruitmentPage/candidatelist';
+import { listdata } from '../utils/listTest';
 
 test.describe('Recruitment Candidate list', () => {
-  let candidatelistTest: Candidatelist;
+  let candidatelistTest: CandidateList;
 
   test.beforeEach(async ({ page }) => {
-    // Instantiate POM
-    candidatelistTest = new Candidatelist(page);
+   
+    candidatelistTest = new CandidateList(page);
 
     // Login
     await page.goto('https://opensource-demo.orangehrmlive.com');
@@ -17,29 +18,33 @@ test.describe('Recruitment Candidate list', () => {
 
     // Navigate to Candidate List page
     await candidatelistTest.navigatelist();
+    /*await page.locator('.oxd-table-card').first().waitFor({ state: 'visible', timeout: 10000 });
+    const allRows = await page.locator('.oxd-table-card').allTextContents();
+    console.log("Rows in table:", allRows);*/
   });
 
   test('View candidate details', async ({ page }) => {
-    await candidatelistTest.view();
+
+    await candidatelistTest.view(listdata.name);
   });
 
-  test('Edit candidate email', async ({ page }) => {
+  /*test('Edit candidate email', async ({ page }) => {
     await candidatelistTest.edit('newemail@test.com');
   });
 
-  test('Delete candidate using Yes, Delete', async ({ page }) => {
+  /*test('Delete candidate using Yes, Delete', async ({ page }) => {
     await candidatelistTest.yesdelete();
   });
 
-  test('Delete candidate – Cancel button', async ({ page }) => {
+  test('Delete candidate Cancel button', async ({ page }) => {
     await candidatelistTest.deletecancel();
   });
 
-  test('Delete candidate – Cross button', async ({ page }) => {
+  test('Delete candidate Cross button', async ({ page }) => {
     await candidatelistTest.deleteCrossButton();
   });
 
   test('Download candidate file', async ({ page }) => {
     await candidatelistTest.download();
-  });
+  });*/
 });

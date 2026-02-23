@@ -10,3 +10,4 @@ export const invalidEmails = [
   '@gmail.com',
   'test@gmail'
 ];
+

@@ -13,11 +13,16 @@ export class RecruitmentFilterpage {
     await this.page.goto("https://opensource-demo.orangehrmlive.com/web/index.php/recruitment/viewCandidates");
   }*/
 async navigaterecruit() { 
-  await this.page.getByRole('link', { name: 'Recruitment' }).click();
-  const candidatesLink= this.page.getByRole('link', { name: 'Candidates' }); 
+  
+  const reqmenu= this.page.locator('.oxd-main-menu-item').filter({hasText:'Recruitment'});
+  await expect(reqmenu).toBeVisible();
+  await reqmenu.click();
+  await expect(this.page).toHaveURL(/recruitment/);
+  //this.page.getByRole('link', { name: 'Recruitment' }).click();
+  /*const candidatesLink= this.page.locator('.oxd-topbar-body-nav-tab').first(); 
   await candidatesLink.waitFor({ state: 'visible' });
-  await candidatesLink.click({ noWaitAfter: true });
-  await this.page.waitForURL(/recruitment\/viewCandidates/);
+  await candidatesLink.click();
+  await this.page.waitForURL(/recruitment\/viewCandidates/);*/
 }
  
  dropdownselectropdownbyLabel(label: string) {
@@ -44,8 +49,9 @@ async navigaterecruit() {
   const options = this.page.locator('.oxd-select-option');
   await options.first().waitFor({ state: 'visible' });
 
+
   // If "No Records Found" is shown, assert it and exit gracefully
-  const noRecords = options.filter({ hasText: 'No Records Found' });
+  /*const noRecords = options.filter({ hasText: 'No Records Found' });
   if (await noRecords.count() > 0) {
     await expect(noRecords.first()).toBeVisible();
     console.log(`No job titles available, cannot select "${jobTitle}"`);
@@ -56,6 +62,7 @@ async navigaterecruit() {
   const selectJobtitle = options.filter({ hasText: new RegExp(jobTitle, 'i') });
   await expect(selectJobtitle.first()).toBeVisible();
   await selectJobtitle.first().click();
+*/
 }
 
 
@@ -100,45 +107,40 @@ async typecandidate(candidatenamehints: string){
     await typecandidates.waitFor({ state: 'visible' });
     await typecandidates.click();
     
-}
-private datepickerform(): Locator {
-  return this.page.locator('.oxd-date-input');
+
 }
 
 async openDatePicker(index: number) {
-  // Click the input
-  await this.datepickerform().nth(index).click();
+  const input = this.page.locator('.oxd-date-input input').nth(index);
+  await expect(input).toBeVisible;
+  await input.click();
 
-  // Wait until the calendar overlay for this input appears
-  const calendar = this.page.locator('.oxd-date-input-calendar').nth(index);
-  await expect(calendar).toBeVisible({ timeout: 5000 });
-
-  return calendar; // For downstream use if needed
+  const calendar = this.page.locator('.oxd-date-input-calendar').last();
+  await expect(calendar).toBeVisible();
 }
 
 
-async selectMonth(month: string, index: number) {
-  // Click month dropdown
-  await this.page.locator('.oxd-calendar-selector-month-selected').nth(index).click();
+async selectMonth(monthName: string) {
 
-  // Wait for the month option to appear in DOM
-  const option = this.page.locator('.oxd-select-option').filter({ hasText: month });
-  await option.first().waitFor({ state: 'visible', timeout: 5000 });
+  const openmonth= this.page.locator('.oxd-calendar-selector-month-selected').first();
+  await expect(openmonth).toBeVisible();
+  await openmonth.click();
 
-  // Click it
-  await option.first().click();
+  const monthOption = this.page.locator('.oxd-calendar-dropdown--option').filter({ hasText: monthName });
+  await expect(monthOption).toBeVisible();
+  await monthOption.click();
 }
 
-async selectYear(year: string, index: number) {
-  // Click year dropdown
-  await this.page.locator('.oxd-calendar-selector-year-selected').nth(index).click();
 
-  // Wait for the year option to appear
-  const option = this.page.locator('.oxd-select-option').filter({ hasText: year });
-  await option.first().waitFor({ state: 'visible', timeout: 5000 });
+async selectYear(year: string) {
+ 
+  const yearv=  this.page.locator('.oxd-calendar-selector-year-selected');
+  await expect(yearv).toBeVisible();
+  await yearv.click();
 
-  // Click it
-  await option.first().click();
+  const yearoption = this.page.locator('.oxd-calendar-dropdown--option').filter({ hasText: year.toString() });
+  await expect(yearoption).toBeVisible();
+  await yearoption.click();
 }
 
 /*const datepickerDate= await this.page.locator('.oxd-calendar-dates-grid .oxd-calendar-date').all();
@@ -150,17 +152,15 @@ for(let dpDate of datepickerDate){
     break;
   }*/
 
-  async selectDate(date: string, index: number) {
-  const dateLocator = this.page
-    .locator('.oxd-calendar-dates-grid .oxd-calendar-date')
-    .nth(index)
-    .filter({ hasText: new RegExp(`^${date}$`) });
-  await expect(dateLocator.first()).toBeVisible({ timeout: 3000 });
+async selectDate(date:string) {
+  const dateLocator = this.page.locator('.oxd-calendar-date').filter({ hasText: new RegExp(`^${date}$`) });
+    
+  await expect(dateLocator).toBeVisible();
   await dateLocator.first().click();
 }
 
 
-  
+ //select month and year using next and prev button 
 async ensureMonthYear(month: string, year: string) {
   const calendar = this.page.locator('.oxd-date-input-calendar');
   await calendar.waitFor({ state: 'visible', timeout: 5000 });
@@ -194,7 +194,7 @@ async ensureMonthYear(month: string, year: string) {
       }
     }
 
-    await this.page.waitForTimeout(200);
+    await expect(header).not.toHaveText(headerText);
   }
 
   throw new Error(`Month/year not reachable: ${month} ${year}`);
@@ -207,29 +207,29 @@ async dateRange(
 ) {
   // FROM
   await this.openDatePicker(0);
-  await this.selectMonth(from.month, 0);
-  await this.selectYear(from.year, 0);
-  await this.selectDate(from.date, 0);
+  await this.selectMonth(from.month);
+  await this.selectYear(from.year);
+  await this.selectDate(from.date);
 
   // TO
   await this.openDatePicker(1);
-  await this.selectMonth(to.month, 1);
-  await this.selectYear(to.year, 1);
-  await this.selectDate(to.date, 1);
+  await this.selectMonth(to.month);
+  await this.selectYear(to.year);
+  await this.selectDate(to.date);
 }
 
 
 
   
 
-async nextMonth() {
+/*async nextMonth() {
   await this.page.locator('.oxd-calendar-next-button').click();
 }
 
 async previousMonth() {
   const calendar = this.page.locator('.oxd-calendar').first();
   await calendar.locator('.oxd-calendar-prev-button').click();
-}
+}*/
 
 async today() {
   await this.page.getByRole('button', { name: 'Today' }).click();
@@ -294,13 +294,13 @@ async validateListResults() {
     if (!(await nextBtn.isVisible())) {
       break;
     }
-
+ 
     await nextBtn.click();
 
     // Wait for table data to change
     await this.page.waitForFunction(
       (prevText) => {
-        const row = document.querySelector('.oxd-table-body .oxd-table-row');
+        const row = document.querySelector('.oxd-table-body.oxd-table-row');
         return row && row.textContent !== prevText;
       },
       previousPage

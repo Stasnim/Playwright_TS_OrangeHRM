@@ -1,4 +1,4 @@
-import { test } from '@playwright/test';
+import { test, expect } from '@playwright/test';
 import { CandidateAdd } from '../pages/recruitmentPage/candidateAdd';
 import { validCandidate, invalidEmails } from '../utils/candaddTestdata';
 
@@ -16,27 +16,63 @@ import { validCandidate, invalidEmails } from '../utils/candaddTestdata';
      await page.locator('input[name="password"]').fill('admin123');
      await page.getByRole('button', { name: 'Login' }).click();
      await page.getByRole('heading', { name: 'Dashboard' }).waitFor({ state: 'visible' });
- 
+    //await expect(page).toHaveURL(/dashboard/);
+    
+    
+    await candidateAddTest.navigateadd()
+
+    await candidateAddTest.addButton();
      
    });
 
     test('Add candidate with validdata', async({page}) => {
-        await candidateAddTest.navigateadd();
-        await candidateAddTest.addButton();
+        //await candidateAddTest.addButton();
+        //await candidateAddTest.navigateadd();
         await candidateAddTest.firstName(validCandidate.fname);
         await candidateAddTest.lastName(validCandidate.lname);
         await candidateAddTest.candEmail(validCandidate.candemail);
-        await candidateAddTest.savebutton();
+        await candidateAddTest.vacancy();
+        await candidateAddTest.fileUpload();
+        await candidateAddTest.savebutton(); 
 
     });
 
-    //test('Required check with emty lname',async({page}) =>{ });
-    //test('Required check with emty lname',async({page}) =>{ });
-    //test('Required check with emty email',async({page}) =>{ });
+    test('Required check with empty fname',async({page}) =>{ 
+      //await candidateAddTest.navigateadd();
+     // await candidateAddTest.addButton();
+      await candidateAddTest.lastName(validCandidate.lname);
+      await candidateAddTest.candEmail(validCandidate.candemail);
+      await candidateAddTest.vacancy();
+      await candidateAddTest.fileUpload();
+      await candidateAddTest.savebutton();
+      await candidateAddTest.errormsgReq();
+    });
+    
+    test('Required check with empty lname',async({page}) =>{ 
+      //await candidateAddTest.navigateadd();
+      //await candidateAddTest.addButton();
+      await candidateAddTest.firstName(validCandidate.fname);
+      await candidateAddTest.candEmail(validCandidate.candemail);
+      await candidateAddTest.vacancy();
+      await candidateAddTest.fileUpload();
+      await candidateAddTest.savebutton();
+      await candidateAddTest.errormsgReq();
+    });
+    
+    test('Required check with emty email',async({page}) =>{
+      //await candidateAddTest.navigateadd();
+      //await candidateAddTest.addButton();
+      await candidateAddTest.firstName(validCandidate.fname);
+      await candidateAddTest.lastName(validCandidate.lname);
+      await candidateAddTest.vacancy();
+      await candidateAddTest.fileUpload();
+      await candidateAddTest.savebutton();
+      await candidateAddTest.errormsgReq();
+     });
 
 test('Negative - invalid Email formats', async () => {
-    await candidateAddTest.navigateadd();
-    await candidateAddTest.addButton();
+    //await candidateAddTest.navigateadd();
+    //await candidateAddTest.addButton();
     await candidateAddTest.firstName(validCandidate.fname);
     await candidateAddTest.lastName(validCandidate.lname);
 

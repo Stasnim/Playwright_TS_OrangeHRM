@@ -3,7 +3,11 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "scripts": {},
+  "scripts": {
+  
+    "WebTests":"npx playwright test --grep \"@smoke\""
+    
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",

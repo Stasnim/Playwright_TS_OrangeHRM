@@ -1,11 +1,11 @@
-//import { test, expect } from '@playwright/test';
-import { test} from '../fixtures/fixturelogin';
+import { test } from '@playwright/test';
+//import { test} from '../fixtures/fixturelogin';
 import {expect} from '@playwright/test';
 import {LoginPage} from '../pages/loginpage';
 import {loginData} from '../utils/loginTestdata';
 
 
-test.describe('OrangeHRM login tests', () => {
+test.describe('@smoke OrangeHRM Login Suite  tests', () => {
 
 test('Positive Login - valid credentials', async ({ page }) => {
     const logintest = new LoginPage(page);

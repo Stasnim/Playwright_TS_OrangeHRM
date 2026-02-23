@@ -1,0 +1,1 @@
+export const listdata = { name: "Charlie Chaplin" };

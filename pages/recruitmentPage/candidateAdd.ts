@@ -10,7 +10,8 @@ constructor(page:Page){
 
 async navigateadd(){
 
-    await this.page.goto("https://opensource-demo.orangehrmlive.com/web/index.php/recruitment/viewCandidates");
+    const candurl= await this.page.goto("https://opensource-demo.orangehrmlive.com/web/index.php/recruitment/viewCandidates");
+     expect(candurl).toBeTruthy();
 }
 async addButton(){
  const addcand=  this.page.locator('.oxd-button').filter({hasText: 'Add'}).click();;
@@ -37,10 +38,13 @@ await this.page.locator('.oxd-select-text').click();
 }
 
 async candEmail(candemail:string){
-    await this. page.getByLabel('Email').fill('candemail');
+    const addemail= this. page.getByPlaceholder('Type here').nth(0);
+    await expect(addemail).toBeVisible();
+    await expect(addemail).toBeEnabled();
+    await addemail.fill(candemail);
 }
 
-async fileupload(){
+/*async fileupload(){
     //const fileChooserPromise = this. page.waitForEvent('filechooser');
    // const resume = await this.page.locator('.oxd-file-div')
    const [uploadFiles] = await Promise.all([
@@ -50,9 +54,19 @@ async fileupload(){
 
    const multifile= uploadFiles.isMultiple();
    console.log(multifile);
-   uploadFiles.setFiles(["uploaditems/resume.pdf"]);
+   uploadFiles.setFiles(["uploaditems/resume.pdf"]); 
    //uploadFiles.setInputFiles('Playwright-ts-waits.txt');
+}*/  
+
+   async fileUpload() {
+  const path = require('path');
+  const filePath = path.resolve('uploaditems/resume.pdf');
+
+  // Directly set file on the hidden input
+  await this.page.locator('input[type="file"]').setInputFiles(filePath);
 }
+
+
 
 async cancelbutton(){
 await this.page.locator('.oxd-button--ghost').click();
